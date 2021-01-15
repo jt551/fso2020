@@ -100,6 +100,21 @@ describe('when there is initially some blogs in database', () => {
       expect(finalResponse).toHaveLength(initialResponse.length - 1)
     })
   })
+  describe('updating a Blog', () => {
+    test('update request is succeeds with valid id and valid data', async () => {
+      const updatedData = {
+        title: 'qq22',
+        author: 'qq22',
+        url: 'qq22',
+        likes: 98,
+      }
+      const initialResponse = await helper.blogsInDb()
+      const response = await api
+        .put(`/api/blogs/${initialResponse[0].id}`)
+        .send(updatedData)
+      expect(response.body.title).toBe('qq22')
+    })
+  })
   afterAll(() => {
     mongoose.connection.close()
   })
