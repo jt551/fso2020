@@ -95,6 +95,22 @@ test('if new blogs likes are not defined they are set to zero', async () => {
   expect(response.body).toHaveLength(initialBlogs.length +1)
   expect(contents.likes).toBe(0)
 })
+
+test('new blog post request without title and url results to bad request response (400)', async () => {
+  const newBlog = {
+    author: 'testAuthorTwo',
+    likes: 8,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(initialBlogs.length)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })

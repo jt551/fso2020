@@ -8,7 +8,7 @@ blogRouter.get('/', async (request, response) => {
 
 blogRouter.post('/', async (request, response) => {
   if(!request.body.likes) request.body.likes = 0
-
+  if(!request.body.title && !request.body.url) return response.status(400).send('title & url missing')
   const blog = new Blog(request.body)
   await blog.save().then((result) => {
     response.status(201).json(result)
