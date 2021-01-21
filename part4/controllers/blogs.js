@@ -11,18 +11,18 @@ blogRouter.get('/', async (request, response) => {
 
 blogRouter.post('/', async (request, response) => {
   const body = request.body
-  const token = getTokenFrom(request)
-  const decodedToken = jwt.verify(token, config.SECRET)
+  if (!body.title && !body.url)
+    return response.status(400).send('title & url missing')
 
-  if (!token || !decodedToken.id) {
+  const decodedToken = jwt.verify(request.token, config.SECRET)
+
+  if (!request.token || !decodedToken.id) {
     return response.status(401).json({ error: 'invalid token' })
   }
 
   const user = await User.findById(decodedToken.id)
-  //if (!user) return response.status(400).send('incorrect user information')
-  //if (!body.likes) body.likes = 0
-  if (!body.title && !body.url)
-    return response.status(400).send('title & url missing')
+  if (!user) return response.status(401).json({ error: 'no user information' })
+
   const blog = new Blog({
     title: body.title,
     author: body.author,
@@ -36,9 +36,24 @@ blogRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-blogRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
-  response.status(204).end()
+blogRouter.delete('/:id', async (request, response) => {  
+  const decodedToken = jwt.verify(request.token, config.SECRET)
+
+  if (!request.token || !decodedToken.id) {
+    return response.status(401).json({ error: 'invalid token' })
+  }
+  const user = await User.findById(decodedToken.id)
+  const blog = await Blog.findById(request.params.id)
+
+  if (!user) return response.status(400).json({ error: 'no user information' })
+  if (!blog) return response.status(400).json({ error: 'no blog information' })
+
+  if (blog.user.toString() === user._id.toString()) {
+    await Blog.findByIdAndRemove(request.params.id)
+    response.status(200).end()
+  } else{
+    response.status(400).json({ error: 'blog id did not match the request user id' })
+  }
 })
 
 blogRouter.put('/:id', async (request, response) => {
@@ -53,14 +68,5 @@ blogRouter.put('/:id', async (request, response) => {
   })
   response.json(updatedBlog)
 })
-
-const getTokenFrom = (request) => {
-  const authorization = request.get('authorization')
-
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
 
 module.exports = blogRouter
