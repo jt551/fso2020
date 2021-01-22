@@ -6,8 +6,13 @@ const api = supertest(app)
 
 const Blog = require('../models/blog')
 const User = require('../models/user')
-
+const config = require('../utils/config')
 describe('when there is initially some blogs in database', () => {
+  const userInfo = {
+    username: 'root',
+    password: config.TEST_PASSWORD,
+  }
+
   beforeEach(async () => {
     const user = await User.findOne({ username: 'root' })
     await Blog.deleteMany({})
@@ -42,17 +47,18 @@ describe('when there is initially some blogs in database', () => {
 
   describe('adding a new Blog', () => {
     test('valid blog can be added', async () => {
-      const user = await User.findOne({ username: 'root' })
+      const loggedUser = await api.post('/api/login').send(userInfo)
+      const token = loggedUser.body.token
       const newBlog = {
         title: 'newTitleForBlogTest',
         author: 'testAuthor',
         url: 'testUrl',
         likes: 8,
-        userId: user._id,
       }
 
       await api
         .post('/api/blogs')
+        .set({ Authorization: `bearer ${token}` })
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -65,16 +71,18 @@ describe('when there is initially some blogs in database', () => {
     })
 
     test('if new blogs likes are not defined they are set to zero', async () => {
-      const user = await User.findOne({ username: 'root' })
+      const loggedUser = await api.post('/api/login').send(userInfo)
+      const token = loggedUser.body.token
+
       const newBlog = {
         title: 'newTitleForBlogTestTwo',
         author: 'testAuthorTwo',
         url: 'testUrlTwo',
-        userId: user._id,
       }
 
       await api
         .post('/api/blogs')
+        .set({ Authorization: `bearer ${token}` })
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -104,10 +112,32 @@ describe('when there is initially some blogs in database', () => {
   })
   describe('deleting a Blog', () => {
     test('delete request is succeeds with valid id', async () => {
+      const loggedUser = await api.post('/api/login').send(userInfo)
+      const token = loggedUser.body.token
+
       const initialResponse = await helper.blogsInDb()
-      await api.delete(`/api/blogs/${initialResponse[0].id}`).expect(204)
+
+      const newBlogData = {
+        title: 'newTitleForBlogTestTwo',
+        author: 'testAuthorTwo',
+        url: 'testUrlTwo',
+      }
+
+      const newBlog = await api
+        .post('/api/blogs')
+        .set({ Authorization: `bearer ${token}` })
+        .send(newBlogData)
+        .expect(201)
+      const middleResponse = await helper.blogsInDb()
+
+      expect(middleResponse).toHaveLength(initialResponse.length + 1)
+
+      await api
+        .delete(`/api/blogs/${newBlog.body.id}`)
+        .set({ Authorization: `bearer ${token}` })
+        .expect(200)
       const finalResponse = await helper.blogsInDb()
-      expect(finalResponse).toHaveLength(initialResponse.length - 1)
+      expect(finalResponse).toHaveLength(initialResponse.length)
     })
   })
   describe('updating a Blog', () => {
