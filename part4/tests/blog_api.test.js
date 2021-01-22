@@ -109,6 +109,19 @@ describe('when there is initially some blogs in database', () => {
       const response = await api.get('/api/blogs')
       expect(response.body).toHaveLength(helper.initialBlogs.length)
     })
+    test('New blog post without valid token results to 401 error', async () => {
+      const user = await User.findOne({ username: 'root' })
+
+      const newBlog = {
+        title: 'newTitleForBlogTestTwo',
+        author: 'testAuthorTwo',
+        url: 'testUrlTwo',
+        likes: 3,
+        userId: user._id,
+      }
+
+      await api.post('/api/blogs').send(newBlog).expect(401)
+    })
   })
   describe('deleting a Blog', () => {
     test('delete request is succeeds with valid id', async () => {

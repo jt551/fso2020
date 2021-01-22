@@ -13,7 +13,9 @@ blogRouter.post('/', async (request, response) => {
   const body = request.body
   if (!body.title && !body.url)
     return response.status(400).send('title & url missing')
-
+  if (!request.token) {
+    return response.status(401).json({ error: 'invalid token' })
+  }
   const decodedToken = jwt.verify(request.token, config.SECRET)
 
   if (!request.token || !decodedToken.id) {
@@ -36,7 +38,7 @@ blogRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-blogRouter.delete('/:id', async (request, response) => {  
+blogRouter.delete('/:id', async (request, response) => {
   const decodedToken = jwt.verify(request.token, config.SECRET)
 
   if (!request.token || !decodedToken.id) {
@@ -51,8 +53,10 @@ blogRouter.delete('/:id', async (request, response) => {
   if (blog.user.toString() === user._id.toString()) {
     await Blog.findByIdAndRemove(request.params.id)
     response.status(200).end()
-  } else{
-    response.status(400).json({ error: 'blog id did not match the request user id' })
+  } else {
+    response
+      .status(400)
+      .json({ error: 'blog id did not match the request user id' })
   }
 })
 
