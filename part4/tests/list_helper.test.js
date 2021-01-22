@@ -185,4 +185,11 @@ describe('highest likes', () => {
       __v: 0,
     })
   })
+  test('lodash returns author with most blogs and their number', () => {
+    const result = listHelper.mostBlogs(listWithManyBlogs)
+    expect(result).toEqual({
+      author: 'Robert C. Martin',
+      blogs: 3,
+    })
+  })
 })
