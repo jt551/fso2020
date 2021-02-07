@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import AddBlogForm from './components/AddBlogForm'
+import Toggleable from './components/Toggleable'
 
 const App = () => {
   const [userMessage, setUserMessage] = useState('')
@@ -12,7 +13,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -34,9 +34,7 @@ const App = () => {
         username,
         password,
       })
-      window.localStorage.setItem(
-        'loggedBlogAppUser', JSON.stringify(user)
-      )      
+      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
       setUser(user)
       setUsername('')
       setPassword('')
@@ -55,7 +53,7 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
   }
-  
+
   const loginForm = () => (
     <div>
       <h2>Login</h2>
@@ -82,7 +80,7 @@ const App = () => {
       </form>
     </div>
   )
-  
+
   const blogList = () => (
     <div>
       <h2>blogs</h2>
@@ -95,13 +93,17 @@ const App = () => {
   return (
     <div>
       <h1>Blog app</h1>
-      <Notification message={userMessage} type={messageType}/>
+      <Notification message={userMessage} type={messageType} />
       {user === null ? (
         loginForm()
       ) : (
-        <div>          
-          <p>{user.name} logged in</p><button onClick={logoutButtonHandler}/>
-          <AddBlogForm blogs={blogs} setBlogs={setBlogs}/>
+        <div>
+          <p>{user.name} logged in</p>
+          <button onClick={logoutButtonHandler}>Logout</button>
+          <Toggleable buttonLabel="Add new blog">
+            <AddBlogForm blogs={blogs} setBlogs={setBlogs} />
+          </Toggleable>
+
           {blogList()}
         </div>
       )}
