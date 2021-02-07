@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import AddBlogForm from './components/AddBlogForm'
 
 const App = () => {
   const [userMessage, setUserMessage] = useState('')
@@ -11,9 +12,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor]=useState('')
-  const [newUrl, setNewUrl]=useState('')
   
 
   useEffect(() => {
@@ -57,21 +55,6 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
   }
-
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const newBlogObj = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
-
-    const response = await blogService.create(newBlogObj)
-    if (response) setBlogs(blogs.concat(response))
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
-  }
   
   const loginForm = () => (
     <div>
@@ -99,15 +82,7 @@ const App = () => {
       </form>
     </div>
   )
-
-  const newBlogForm = () => (
-    <form onSubmit={addBlog}>
-      <input type="text" value={newAuthor} onChange={({target}) => setNewAuthor(target.value)}></input>
-      <input type="text" value={newTitle} onChange={({target}) => setNewTitle(target.value)}></input>
-      <input type="text" value={newUrl} onChange={({target}) => setNewUrl(target.value)}></input>
-      <button type="submit">Add Blog</button>
-    </form>
-  )
+  
   const blogList = () => (
     <div>
       <h2>blogs</h2>
@@ -116,6 +91,7 @@ const App = () => {
       ))}
     </div>
   )
+
   return (
     <div>
       <h1>Blog app</h1>
@@ -125,7 +101,7 @@ const App = () => {
       ) : (
         <div>          
           <p>{user.name} logged in</p><button onClick={logoutButtonHandler}/>
-          {newBlogForm()}
+          <AddBlogForm blogs={blogs} setBlogs={setBlogs}/>
           {blogList()}
         </div>
       )}
