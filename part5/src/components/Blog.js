@@ -49,21 +49,26 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
       </div>
     </div>
   )
-  const deleteButtonHandler = () => {
-    console.log('deletebutton')
+  const deleteButtonHandler = async () => {    
     const input = window.confirm(`Delete Blog ${blog.title}. Are you sure?`)
-    if(input){
-      console.log('deletebutton')
-    }    
+    if (input) {      
+      const response = await blogService.remove(blog.id)
+      console.log(response)
+      const filteredBlogs = blogs.filter((b) => b.id !== blog.id)
+      setBlogs(filteredBlogs)
+    }
   }
   const deleteButtonStyle = {
-    backgroundColor: '#f44336',    
-    color: 'white'
+    backgroundColor: '#f44336',
+    color: 'white',
   }
   const deleteButton = () => {
-  return (
-  <button onClick={deleteButtonHandler} style={deleteButtonStyle}>Delete</button>
-  )}
+    return (
+      <button onClick={deleteButtonHandler} style={deleteButtonStyle}>
+        Delete
+      </button>
+    )
+  }
 
   const details = () => {
     let button = null
