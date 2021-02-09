@@ -9,7 +9,7 @@ import LoginForm from './components/LoginForm'
 const App = () => {
   const [userMessage, setUserMessage] = useState('')
   const [messageType, setMessageType] = useState('')
-  const [blogs, setBlogs] = useState([])  
+  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
 
   useEffect(() => {
@@ -25,27 +25,33 @@ const App = () => {
     }
   }, [])
 
-  
   const logoutButtonHandler = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
   }
 
-  const blogList = () => (
-    <div>
-      <h2>blogs</h2>
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
-    </div>
-  )
+  const blogList = () => {
+    const sorted = blogs.sort((a,b) => b.likes - a.likes)
+    return (
+      <div>
+        <h2>blogs</h2>
+        {sorted.map((blog) => (
+          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} user={user} />
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div>
       <h1>Blog app</h1>
       <Notification message={userMessage} type={messageType} />
       {user === null ? (
-        <LoginForm setUser={setUser} setUserMessage={setUserMessage} setMessageType={setMessageType}/>
+        <LoginForm
+          setUser={setUser}
+          setUserMessage={setUserMessage}
+          setMessageType={setMessageType}
+        />
       ) : (
         <div>
           <p>{user.name} logged in</p>

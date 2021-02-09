@@ -1,8 +1,14 @@
 import { useState } from 'react'
 import React from 'react'
-const Blog = ({ blog }) => {
+import blogService from '../services/blogs'
+
+const Blog = ({ blog, blogs, setBlogs, user }) => {
   const [showDetails, setShowDetails] = useState(false)
 
+  const owner = user.username === blog.user.username
+  // console.log('blog.user',blog.user)
+  // console.log('user.username',user.username)
+  // console.log(owner, user.username, blog.user.username)
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -11,7 +17,22 @@ const Blog = ({ blog }) => {
     marginBottom: 5,
   }
 
-  const likeButtonHandler = () => {}
+  const likeButtonHandler = async () => {
+    const blogObj = {
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url,
+    }
+
+    //const blogObj = {...blog, likes: blog.likes +1 }
+    const response = await blogService.update(blog.id, blogObj)
+    //console.log('blogservice response object : ', response)
+    setBlogs(
+      blogs.map((original) => (original.id !== blog.id ? original : response))
+    )
+  }
 
   const showButtonHandler = () => {
     setShowDetails(true)
@@ -28,24 +49,43 @@ const Blog = ({ blog }) => {
       </div>
     </div>
   )
-
-  const details = () => (
-    <div style={blogStyle}>
-      <div>
-        <h4>{blog.title}</h4>
-        <p>{blog.author}</p>
-        <p>{blog.url}</p>
-        <p>{blog.likes} <span><button onClick={likeButtonHandler}> Like </button></span></p>
-        <button onClick={hideButtonHandler}>Hide</button>
-      </div>
-    </div>
-  )
-
+  const deleteButtonHandler = () => {
+    console.log('deletebutton')
+    const input = window.confirm(`Delete Blog ${blog.title}. Are you sure?`)
+    if(input){
+      console.log('deletebutton')
+    }    
+  }
+  const deleteButton = () => {
   return (
-    <div>
-      { showDetails === false ? simple() : details() }
-    </div>
+  <button onClick={deleteButtonHandler}>Delete</button>
+  )}
+
+  const details = () => {
+    let button = null
+    if (owner) {
+      button = deleteButton
+    }
+    return (
+      <div style={blogStyle}>
+        <div>
+          <h4>{blog.title}</h4>
+          <p>{blog.author}</p>
+          <p>{blog.url}</p>
+          <p>
+            {blog.likes}{' '}
+            <span>
+              <button onClick={likeButtonHandler}> Like </button>
+            </span>
+          </p>
+          <button onClick={hideButtonHandler}>Hide</button>
+        </div>
+        {owner ? deleteButton() : null}
+      </div>
     )
+  }
+
+  return <div>{showDetails === false ? simple() : details()}</div>
 }
 
 export default Blog
