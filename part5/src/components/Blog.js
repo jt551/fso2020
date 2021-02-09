@@ -56,9 +56,13 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
       console.log('deletebutton')
     }    
   }
+  const deleteButtonStyle = {
+    backgroundColor: '#f44336',    
+    color: 'white'
+  }
   const deleteButton = () => {
   return (
-  <button onClick={deleteButtonHandler}>Delete</button>
+  <button onClick={deleteButtonHandler} style={deleteButtonStyle}>Delete</button>
   )}
 
   const details = () => {
