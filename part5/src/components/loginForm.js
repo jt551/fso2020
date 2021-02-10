@@ -58,7 +58,7 @@ const LoginForm = ({ setUser, setUserMessage, setMessageType }) => {
   )
 }
 
-LoginForm.PropTypes = {
+LoginForm.propTypes = {
   setUser: PropTypes.func.isRequired,
   setUserMessage: PropTypes.func.isRequired,
   setMessageType: PropTypes.func.isRequired,
