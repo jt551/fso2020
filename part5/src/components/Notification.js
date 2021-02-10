@@ -1,15 +1,16 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const Notification = ({ message, type }) => {
   if (message === null || '') {
     return null
   }
   if(type === 'error'){
-  return (
-    <div className="notification_error">
-      {message}
-    </div>
-  )
+    return (
+      <div className="notification_error">
+        {message}
+      </div>
+    )
   }else if( type === 'success'){
     return (
       <div className="notification_success">
@@ -22,7 +23,12 @@ const Notification = ({ message, type }) => {
         {message}
       </div>
     )
-  } 
+  }
+}
+
+Notification.PropTypes = {
+  message: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired
 }
 
 export default Notification

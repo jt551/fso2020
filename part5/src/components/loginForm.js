@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
+import PropTypes from 'prop-types'
 
-const LoginForm = ({setUser, setUserMessage, setMessageType}) => {
+const LoginForm = ({ setUser, setUserMessage, setMessageType }) => {
   const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')  
+  const [password, setPassword] = useState('')
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -56,4 +57,11 @@ const LoginForm = ({setUser, setUserMessage, setMessageType}) => {
     </div>
   )
 }
+
+LoginForm.PropTypes = {
+  setUser: PropTypes.func.isRequired,
+  setUserMessage: PropTypes.func.isRequired,
+  setMessageType: PropTypes.func.isRequired,
+}
+
 export default LoginForm

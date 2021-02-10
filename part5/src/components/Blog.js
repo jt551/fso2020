@@ -49,9 +49,9 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
       </div>
     </div>
   )
-  const deleteButtonHandler = async () => {    
+  const deleteButtonHandler = async () => {
     const input = window.confirm(`Delete Blog ${blog.title}. Are you sure?`)
-    if (input) {      
+    if (input) {
       const response = await blogService.remove(blog.id)
       console.log(response)
       const filteredBlogs = blogs.filter((b) => b.id !== blog.id)
