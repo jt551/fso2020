@@ -45,7 +45,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
   const simple = () => (
     <div style={blogStyle}>
       <div>
-        {blog.title} <button onClick={showButtonHandler}>Show</button>
+        <p><span>{blog.author} </span><span>{blog.title}</span></p><button onClick={showButtonHandler}>Show</button>
       </div>
     </div>
   )
@@ -76,7 +76,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
       button = deleteButton
     }
     return (
-      <div style={blogStyle}>
+      <div style={blogStyle} className="blogClass">
         <div>
           <h4>{blog.title}</h4>
           <p>{blog.author}</p>
