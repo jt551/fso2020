@@ -45,7 +45,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
   const simple = () => (
     <div style={blogStyle}>
       <div>
-        <p><span>{blog.author} </span><span>{blog.title}</span></p><button onClick={showButtonHandler}>Show</button>
+        <p><span>{blog.author} </span><span>{blog.title}</span></p><button onClick={showButtonHandler} className="showButton">Show</button>
       </div>
     </div>
   )
@@ -84,7 +84,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
           <p>
             {blog.likes}{' '}
             <span>
-              <button onClick={likeButtonHandler}> Like </button>
+              <button onClick={likeButtonHandler} className="likeButton"> Like </button>
             </span>
           </p>
           <button onClick={hideButtonHandler}>Hide</button>
