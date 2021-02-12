@@ -1,21 +1,28 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
 
-const NewBlogForm = ({ blogs, setBlogs }) => {
+const NewBlogForm = ({ blogs, setBlogs, addBlogHandler }) => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
 
-  const addBlog = async (event) => {
+  const addBlogDefaultHandler = async (newBlogObj) => {
+
+    const response = await blogService.create(newBlogObj)
+    if (response) setBlogs(blogs.concat(response))
+
+  }
+
+  if (!addBlogHandler) addBlogHandler = addBlogDefaultHandler
+
+  const addBlog = (event) => {
     event.preventDefault()
     const newBlogObj = {
       title: newTitle,
       author: newAuthor,
       url: newUrl,
     }
-
-    const response = await blogService.create(newBlogObj)
-    if (response) setBlogs(blogs.concat(response))
+    addBlogHandler(newBlogObj)
     setNewTitle('')
     setNewAuthor('')
     setNewUrl('')
@@ -24,18 +31,22 @@ const NewBlogForm = ({ blogs, setBlogs }) => {
   return (
     <div>
       <h2>Create a new blog entry</h2>
-      <form onSubmit={addBlog}>
+      <form id="newBlogForm" onSubmit={addBlog}>
         <input
+          id="newBlogFormAuthor"
+          name="author"
           type="text"
           value={newAuthor}
           onChange={({ target }) => setNewAuthor(target.value)}
         ></input>
         <input
+          id="newBlogFormTitle"
           type="text"
           value={newTitle}
           onChange={({ target }) => setNewTitle(target.value)}
         ></input>
         <input
+          id="newBlogFormUrl"
           type="text"
           value={newUrl}
           onChange={({ target }) => setNewUrl(target.value)}
