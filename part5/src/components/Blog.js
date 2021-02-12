@@ -2,9 +2,9 @@ import { useState } from 'react'
 import React from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs, user }) => {
+const Blog = ({ blog, blogs, setBlogs, user, likeButtonHandler }) => {
   const [showDetails, setShowDetails] = useState(false)
-
+  
   const owner = user.username === blog.user.username
   // console.log('blog.user',blog.user)
   // console.log('user.username',user.username)
@@ -17,7 +17,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     marginBottom: 5,
   }
 
-  const likeButtonHandler = async () => {
+  const likeButtonHandlerOption = async () => {
     const blogObj = {
       user: blog.user.id,
       likes: blog.likes + 1,
@@ -33,6 +33,8 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
       blogs.map((original) => (original.id !== blog.id ? original : response))
     )
   }
+
+  if (!likeButtonHandler) likeButtonHandler=likeButtonHandlerOption
 
   const showButtonHandler = () => {
     setShowDetails(true)
