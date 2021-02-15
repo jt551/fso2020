@@ -4,7 +4,7 @@ import blogService from '../services/blogs'
 
 const Blog = ({ blog, blogs, setBlogs, user, likeButtonHandler }) => {
   const [showDetails, setShowDetails] = useState(false)
-  
+
   const owner = user.username === blog.user.username
   // console.log('blog.user',blog.user)
   // console.log('user.username',user.username)
@@ -34,7 +34,7 @@ const Blog = ({ blog, blogs, setBlogs, user, likeButtonHandler }) => {
     )
   }
 
-  if (!likeButtonHandler) likeButtonHandler=likeButtonHandlerOption
+  if (!likeButtonHandler) likeButtonHandler = likeButtonHandlerOption
 
   const showButtonHandler = () => {
     setShowDetails(true)
@@ -47,7 +47,13 @@ const Blog = ({ blog, blogs, setBlogs, user, likeButtonHandler }) => {
   const simple = () => (
     <div style={blogStyle}>
       <div>
-        <p><span>{blog.author} </span><span>{blog.title}</span></p><button onClick={showButtonHandler} className="showButton">Show</button>
+        <p>
+          <span>{blog.author} </span>
+          <span>{blog.title}</span>
+        </p>
+        <button id="showBlogButton" onClick={showButtonHandler} className="showButton">
+          Show
+        </button>
       </div>
     </div>
   )
@@ -86,7 +92,10 @@ const Blog = ({ blog, blogs, setBlogs, user, likeButtonHandler }) => {
           <p>
             {blog.likes}{' '}
             <span>
-              <button onClick={likeButtonHandler} className="likeButton"> Like </button>
+              <button onClick={likeButtonHandler} className="likeButton">
+                {' '}
+                Like{' '}
+              </button>
             </span>
           </p>
           <button onClick={hideButtonHandler}>Hide</button>
