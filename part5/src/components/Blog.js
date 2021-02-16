@@ -4,11 +4,10 @@ import blogService from '../services/blogs'
 
 const Blog = ({ blog, blogs, setBlogs, user, likeButtonHandler }) => {
   const [showDetails, setShowDetails] = useState(false)
-
+  //console.log(blog)
+  // Boolean check if current user is the owner of this blog item
   const owner = user.username === blog.user.username
-  // console.log('blog.user',blog.user)
-  // console.log('user.username',user.username)
-  // console.log(owner, user.username, blog.user.username)
+  
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -72,24 +71,24 @@ const Blog = ({ blog, blogs, setBlogs, user, likeButtonHandler }) => {
   }
   const deleteButton = () => {
     return (
-      <button onClick={deleteButtonHandler} style={deleteButtonStyle}>
+      <button onClick={deleteButtonHandler} style={deleteButtonStyle} className="deleteButton">
         Delete
       </button>
     )
   }
 
-  const details = () => {
+  const details = () => {    
     let button = null
     if (owner) {
       button = deleteButton
     }
     return (
-      <div style={blogStyle} className="blogClass">
+      <div style={blogStyle} className="blogDiv">
         <div>
-          <h4>{blog.title}</h4>
+          <h4 className="blogTitle">{blog.title}</h4>
           <p>{blog.author}</p>
           <p>{blog.url}</p>
-          <p>
+          <p id="blogLikes">
             {blog.likes}{' '}
             <span>
               <button onClick={likeButtonHandler} className="likeButton">
