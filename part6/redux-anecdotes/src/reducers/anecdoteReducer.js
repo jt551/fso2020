@@ -9,6 +9,8 @@ const anecdotesAtStart = [
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
+const sortByKey = (key) => (a, b) => (a[key] < b[key] ? 1 : -1)
+
 const asObject = (anecdote) => {
   return {
     content: anecdote,
@@ -17,7 +19,7 @@ const asObject = (anecdote) => {
   }
 }
 
-const initialState = anecdotesAtStart.map(asObject)
+const initialState = anecdotesAtStart.map(asObject).sort(sortByKey('votes'))
 
 const reducer = (state = initialState, action) => {
   console.log('state now: ', state)
@@ -30,12 +32,16 @@ const reducer = (state = initialState, action) => {
         ...votedAnecdote,
         votes: votedAnecdote.votes + 1,
       }
-      return state.map((a) => (a.id !== id ? a : updatedAnecdote))
+      return state
+        .map((a) => (a.id !== id ? a : updatedAnecdote))
+        .sort(sortByKey('votes'))
+
     case 'NEW':
       const newAnecdoteObj = asObject(action.data.content)
-      return state.concat(newAnecdoteObj)
+      return state.concat(newAnecdoteObj).sort(sortByKey('votes'))
+
     default:
-      return state
+      return state.sort(sortByKey('votes'))
   }
 }
 
