@@ -16,7 +16,12 @@ const Anecdote = ({ id, content, votes, voteHandler }) => {
 }
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector((state) => state.anecdotes)
+  const filter = useSelector((state => state.filter))
+  const anecdotes = useSelector((state) => {
+    if (!filter) return state.anecdotes
+    return state.anecdotes.filter(anecdote => anecdote.content.includes(filter))
+  })
+  
   const dispatch = useDispatch()
 
   const voteHandler = async (id, content) => {
@@ -26,7 +31,7 @@ const AnecdoteList = () => {
       dispatch(setNotification(''))
     },5000)
   }
-
+  
   return (
     <div>
       <h2>Anecdotes</h2>
