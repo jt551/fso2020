@@ -26,10 +26,7 @@ const AnecdoteList = () => {
 
   const voteHandler = async (id, content) => {
     dispatch(vote(id))
-    dispatch(setNotification(`You voted for "${content}"`))
-    setTimeout(()=> {
-      dispatch(setNotification(''))
-    },5000)
+    dispatch(setNotification(`You voted for "${content}"`, 2))    
   }
   
   return (
