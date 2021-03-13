@@ -1,27 +1,38 @@
-const notificationReducer = (state = '', action) => {
+const notificationReducer = (state = "", action) => {
   switch (action.type) {
     case 'SET_NOTIFICATION':
-      return action.data
+      if (state.timeId){
+        console.log('SET_NOTIFICATION IF timeId BLOCK, ',state.timeId)
+        clearTimeout(state.timeId)
+      } 
+      return {
+        notification: action.data.notification,
+        timeId: action.data.timeId,
+      }
     case 'CLEAR':
-      return ""
+      return {}
     default:
       return state
   }
 }
 //ensimmäisenä parametrina on renderöitävä teksti ja toisena notifikaation näyttöaika sekunneissa.
 export const setNotification = (notification, time) => {
-  const delay = time*1000  
+  const delay = time * 1000
+
   return async (dispatch) => {
-    dispatch({
-      type: 'SET_NOTIFICATION',
-      data: notification,
-    })
-    setTimeout(() => {
+    const timeId = setTimeout(() => {
       dispatch({
         type: 'CLEAR',
-        data: "",
+        data: '',
       })
     }, delay)
+    dispatch({
+      type: 'SET_NOTIFICATION',
+      data: {
+        notification,
+        timeId,
+      },
+    })
   }
 }
 
