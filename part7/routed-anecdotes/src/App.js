@@ -1,5 +1,6 @@
+import { render } from '@testing-library/react'
 import React, { useState } from 'react'
-import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
+import { Switch, Route, Link, useRouteMatch, Redirect } from 'react-router-dom'
 
 const Menu = () => {
   const padding = {
@@ -21,10 +22,10 @@ const Menu = () => {
 }
 const Anecdote = ({ anecdote }) => (
   <div>
-    <h2>Anecdote</h2>    
-        <div>        
-        <h3>{anecdote.content}</h3>
-        </div>
+    <h2>Anecdote</h2>
+    <div>
+      <h3>{anecdote.content}</h3>
+    </div>
   </div>
 )
 
@@ -33,9 +34,9 @@ const AnecdoteList = ({ anecdotes }) => (
     <h2>Anecdotes</h2>
     <ul>
       {anecdotes.map((anecdote) => (
-        <div key={anecdote.id}>        
-        <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
-        </div>        
+        <div key={anecdote.id}>
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+        </div>
       ))}
     </ul>
   </div>
@@ -81,6 +82,7 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
+  const [redirect, setRedirect] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -90,40 +92,59 @@ const CreateNew = (props) => {
       info,
       votes: 0,
     })
+    setRedirect(true)
   }
 
   return (
     <div>
-      <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
+      {redirect ? (
+        <Redirect to="/" />
+      ) : (
         <div>
-          content
-          <input
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
+          <h2>create a new anecdote</h2>
+          <form onSubmit={handleSubmit}>
+            <div>
+              content
+              <input
+                name="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+              />
+            </div>
+            <div>
+              author
+              <input
+                name="author"
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+              />
+            </div>
+            <div>
+              url for more info
+              <input
+                name="info"
+                value={info}
+                onChange={(e) => setInfo(e.target.value)}
+              />
+            </div>
+            <button>create</button>
+          </form>
         </div>
-        <div>
-          author
-          <input
-            name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
-        </div>
-        <div>
-          url for more info
-          <input
-            name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
-          />
-        </div>
-        <button>create</button>
-      </form>
+      )}
     </div>
   )
+}
+
+const Notification = ({ notification }) => {
+  const style = {
+    border: 'solid',
+    padding: 10,
+    borderWidth: 1,
+  }
+
+  if (!notification) return null
+
+  return <div style={style}>{notification}</div>
 }
 
 const App = () => {
@@ -149,6 +170,12 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(
+      `New anecdote successfully created with a id of ${anecdote.id}`
+    )
+    setTimeout(() => {
+      setNotification('')
+    }, 10000)
   }
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id)
@@ -165,19 +192,19 @@ const App = () => {
   }
 
   const pathparam = useRouteMatch('/anecdotes/:id')
-  
+
   //const r = pathparam ? anecdotes.find(a => a.id === Number(pathparam.params.id)) : null
-  const anecdoteQueryResult = pathparam 
+  const anecdoteQueryResult = pathparam
     ? anecdoteById(String(pathparam.params.id))
     : null
-  
+
   return (
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
-
+      <Notification notification={notification} />
       <Switch>
-        <Route path='/anecdotes/:id'>
+        <Route path="/anecdotes/:id">
           <Anecdote anecdote={anecdoteQueryResult} />
         </Route>
         <Route path="/about">
