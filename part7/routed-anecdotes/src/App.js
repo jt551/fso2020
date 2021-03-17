@@ -3,6 +3,10 @@ import React, { useState } from 'react'
 import { Switch, Route, Link, useRouteMatch, Redirect } from 'react-router-dom'
 import { useField } from './hooks/index'
 
+// Dynamically exclude a property
+const removeProperty = prop => ({ [prop]: _, ...rest }) => rest
+const removeResetProperty = removeProperty('reset') 
+
 const Menu = () => {
   const padding = {
     paddingRight: 5,
@@ -79,16 +83,17 @@ const Footer = () => (
   </div>
 )
 
-const CreateNew = (props) => {
-  //const [content, setContent] = useState('')
-  //const [author, setAuthor] = useState('')
-  //const [info, setInfo] = useState('')
+const CreateNew = (props) => {  
   const [redirect, setRedirect] = useState(false)
 
-  const content = useField('text')
-  const author = useField('text')
-  const info = useField('text')
-
+  const content_full = useField('text') 
+  const author_full = useField('text')
+  const info_full = useField('text')
+  
+  const content = removeResetProperty(content_full)
+  const author = removeResetProperty(author_full)
+  const info = removeResetProperty(info_full)
+  
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
@@ -101,9 +106,9 @@ const CreateNew = (props) => {
   }
 
   const resetHandler = () => {
-    content.reset()
-    author.reset()
-    info.reset()
+    content_full.reset()
+    author_full.reset()
+    info_full.reset()
   }
 
   return (
