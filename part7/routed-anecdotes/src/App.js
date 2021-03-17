@@ -100,6 +100,12 @@ const CreateNew = (props) => {
     setRedirect(true)
   }
 
+  const resetHandler = () => {
+    content.reset()
+    author.reset()
+    info.reset()
+  }
+
   return (
     <div>
       {redirect ? (
@@ -120,7 +126,8 @@ const CreateNew = (props) => {
               url for more info
               <input {...info}/>
             </div>
-            <button>create</button>
+            <button type="submit">create</button>
+            <button type="button" onClick={resetHandler}>reset</button>
           </form>
         </div>
       )}
