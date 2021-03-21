@@ -12,6 +12,7 @@ import { setNotification } from './reducers/notificationReducer'
 import { Route, Switch } from 'react-router'
 import Users from './components/Users'
 import User from './components/User'
+import { Link } from 'react-router-dom'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -127,13 +128,23 @@ const App = () => {
   }
 
   const byLikes = (b1, b2) => b2.likes - b1.likes
-  console.log('app user',user.username)
+  console.log('app user', user.username)
   return (
     <div>
+      <div>
+        <Link to="/">
+          home
+        </Link>
+        <Link to="/blogs">
+          blogs
+        </Link>
+        <Link to="/users">
+          users
+        </Link>
+      </div>
       <h2>blogs</h2>
 
       <Notification />
-
       <p>
         {user.name} logged in <button onClick={handleLogout}>logout</button>
       </p>
@@ -145,7 +156,12 @@ const App = () => {
           <Users />
         </Route>
         <Route path="/blogs/:id">
-          <Blog blogs={blogs} handleLike={handleLike} handleRemove={handleRemove} user={user.username} />
+          <Blog
+            blogs={blogs}
+            handleLike={handleLike}
+            handleRemove={handleRemove}
+            user={user.username}
+          />
         </Route>
         <Route path="/">
           <Togglable buttonLabel="create new blog" ref={blogFormRef}>
