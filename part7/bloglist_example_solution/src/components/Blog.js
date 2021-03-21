@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 //import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
 const Blog = ({ blogs, blog, handleLike, handleRemove, own, user }) => {
   const [visible, setVisible] = useState(false)
 
@@ -23,8 +24,8 @@ const Blog = ({ blogs, blog, handleLike, handleRemove, own, user }) => {
           likes {blog.likes}
         </div>
         <div>{blog.user.name}</div>
-        <button onClick={() => handleLike(blog.id)}>like</button>
-        {user === blog.user.username && <button onClick={() => handleRemove(blog.id)}>remove</button>}
+        <Button onClick={() => handleLike(blog.id)}>like</Button>
+        {user === blog.user.username && <Button variant="danger" onClick={() => handleRemove(blog.id)}>remove</Button>}
       </div>
     )
   }
@@ -35,17 +36,17 @@ const Blog = ({ blogs, blog, handleLike, handleRemove, own, user }) => {
           <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
         </i>{' '}
         by {blog.author}{' '}
-        <button onClick={() => setVisible(!visible)}>{label}</button>
+        <Button onClick={() => setVisible(!visible)}>{label}</Button>
       </div>
       {visible && (
         <div>
           <div>{blog.url}</div>
           <div>
             likes {blog.likes}
-            <button onClick={() => handleLike(blog.id)}>like</button>
+            <Button onClick={() => handleLike(blog.id)}>like</Button>
           </div>
           <div>{blog.user.name}</div>
-          {own && <button onClick={() => handleRemove(blog.id)}>remove</button>}
+          {own && <Button variant="danger" onClick={() => handleRemove(blog.id)}>remove</Button>}
         </div>
       )}
     </div>

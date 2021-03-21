@@ -13,6 +13,7 @@ import { Route, Switch } from 'react-router'
 import Users from './components/Users'
 import User from './components/User'
 import { Link } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -121,7 +122,7 @@ const App = () => {
               onChange={({ target }) => setPassword(target.value)}
             />
           </div>
-          <button id="login">login</button>
+          <Button id="login">login</Button>
         </form>
       </div>
     )
@@ -130,48 +131,51 @@ const App = () => {
   const byLikes = (b1, b2) => b2.likes - b1.likes
   console.log('app user', user.username)
   return (
-    <div>
-      <div>
+    <div className="container">
+      <div className="navbar navbar-dark">
         <Link to="/"> home </Link>
         <Link to="/blogs"> blogs </Link>
         <Link to="/users"> users </Link>
-        <span>  {user.name} logged in </span><button onClick={handleLogout}>logout</button>
+        <span> {user.name} logged in </span>
+        <Button variant="danger" onClick={handleLogout}>logout</Button>
       </div>
-      <h2>blogs</h2>
+      <div className="jumbotron">
+        <h2>blogs</h2>
 
-      <Notification />
+        <Notification />
 
-      <Switch>
-        <Route path="/users/:id">
-          <User />
-        </Route>
-        <Route path="/users">
-          <Users />
-        </Route>
-        <Route path="/blogs/:id">
-          <Blog
-            blogs={blogs}
-            handleLike={handleLike}
-            handleRemove={handleRemove}
-            user={user.username}
-          />
-        </Route>
-        <Route path="/">
-          <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-            <NewBlog createBlog={createBlog} />
-          </Togglable>
-
-          {blogs.sort(byLikes).map((blog) => (
+        <Switch>
+          <Route path="/users/:id">
+            <User />
+          </Route>
+          <Route path="/users">
+            <Users />
+          </Route>
+          <Route path="/blogs/:id">
             <Blog
-              key={blog.id}
-              blog={blog}
+              blogs={blogs}
               handleLike={handleLike}
               handleRemove={handleRemove}
-              own={user.username === blog.user.username}
+              user={user.username}
             />
-          ))}
-        </Route>
-      </Switch>
+          </Route>
+          <Route path="/">
+            <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+              <NewBlog createBlog={createBlog} />
+            </Togglable>
+
+            {blogs.sort(byLikes).map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                handleLike={handleLike}
+                handleRemove={handleRemove}
+                own={user.username === blog.user.username}
+              />
+            ))}
+          </Route>
+        </Switch>
+      </div>
     </div>
   )
 }

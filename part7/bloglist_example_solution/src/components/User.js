@@ -5,16 +5,23 @@ import userService from '../services/users'
 const User = () => {
   const [users, setUsers] = useState([])
   const [user, setUser] = useState(null)
-  const id = useParams().id
 
+  let id = useParams().id
   useEffect(() => {
-    userService.getAllUsers().then((apiusers) => setUsers(apiusers))
+    userService.getAllUsers().then((ausers) => setUsers(ausers)).then(() => {
+      console.log('useEffect all users', users)
+      setUser(users.find(u => u.id === String(id)))
+    })
+  }, [id])
+  // useEffect(() => {
+  //   userService.getAllUsers().then((apiusers) => setUsers(apiusers))
 
-    const res = users.find((u) => u.id === String(id))
-    if (res) setUser(res)
+  //   const res = users.find((u) => u.id === String(id))
+  //   if (res) setUser(res)
 
-    console.log('useEffect all users', users)
-  }, [])
+  //   console.log('useEffect all users', users)
+  //   //console.log('props', props.match.params.id)
+  // }, [])
   if (!user)
     return (
       <div>
