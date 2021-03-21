@@ -127,7 +127,7 @@ const App = () => {
   }
 
   const byLikes = (b1, b2) => b2.likes - b1.likes
-
+  console.log('app user',user.username)
   return (
     <div>
       <h2>blogs</h2>
@@ -143,6 +143,9 @@ const App = () => {
         </Route>
         <Route path="/users">
           <Users />
+        </Route>
+        <Route path="/blogs/:id">
+          <Blog blogs={blogs} handleLike={handleLike} handleRemove={handleRemove} user={user.username} />
         </Route>
         <Route path="/">
           <Togglable buttonLabel="create new blog" ref={blogFormRef}>
