@@ -1,4 +1,4 @@
-const notificationReducer = (state = '', action) => {
+const notificationReducer = (state = { notification: null }, action) => {
   switch (action.type) {
   case 'SET_NOTIFICATION':
     if (state.timeId) {
@@ -10,7 +10,7 @@ const notificationReducer = (state = '', action) => {
       timeId: action.data.timeId,
     }
   case 'CLEAR':
-    return {}
+    return { notification: null }
   default:
     return state
   }
