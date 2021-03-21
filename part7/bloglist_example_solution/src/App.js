@@ -11,6 +11,8 @@ import { useDispatch } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 import { Route, Switch } from 'react-router'
 import Users from './components/Users'
+import User from './components/User'
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
@@ -136,10 +138,13 @@ const App = () => {
         {user.name} logged in <button onClick={handleLogout}>logout</button>
       </p>
       <Switch>
-        <Route path='/users'>
+        <Route path="/users/:id">
+          <User />
+        </Route>
+        <Route path="/users">
           <Users />
         </Route>
-        <Route path='/'>
+        <Route path="/">
           <Togglable buttonLabel="create new blog" ref={blogFormRef}>
             <NewBlog createBlog={createBlog} />
           </Togglable>
