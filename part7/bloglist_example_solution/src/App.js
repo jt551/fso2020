@@ -132,9 +132,9 @@ const App = () => {
   return (
     <div>
       <div>
-        <Link to="/">home</Link>
-        <Link to="/blogs">blogs</Link>
-        <Link to="/users">users</Link>
+        <Link to="/"> home </Link>
+        <Link to="/blogs"> blogs </Link>
+        <Link to="/users"> users </Link>
         <span>  {user.name} logged in </span><button onClick={handleLogout}>logout</button>
       </div>
       <h2>blogs</h2>
