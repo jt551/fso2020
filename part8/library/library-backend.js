@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, UserInputError } = require('apollo-server')
 const { v1: uuid } = require('uuid')
 
 require('dotenv').config()
@@ -8,10 +8,15 @@ const Author = require('./schemas/Author')
 const Book = require('./schemas/Book')
 const MONGODB_URI = process.env.MONGODB_URI
 
-
 console.log('connecting to', MONGODB_URI)
 
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+mongoose
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+  })
   .then(() => {
     console.log('connected to MongoDB')
   })
@@ -29,15 +34,15 @@ const typeDefs = gql`
   type Book {
     title: String!
     published: Int!
-    author: Author!    
+    author: Author!
     genres: [String!]!
     id: ID!
   }
   type Author {
-    name: String!,
+    name: String!
     id: ID!
     born: Int
-    bookCount: Int   
+    bookCount: Int
   }
   type Mutation {
     addBook(
@@ -46,38 +51,33 @@ const typeDefs = gql`
       author: String!
       genres: [String!]!
     ): Book
-    editAuthor(
-      name: String!
-      setBornTo: Int!
-    ): Author
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `
 
 const resolvers = {
   Query: {
     bookCount: (root, args) => {
-      if (!args.author){
-        return Book.collection.countDocuments()
-      }
+      // if (!args.author) {
+      //   return Book.collection.countDocuments()
+      // }
       return Book.collection.countDocuments()
-      // const booksFilteredByAuthor = books.filter(b => b.author === args.author)
-      // return booksFilteredByAuthor.length 
     },
 
     authorCount: () => Author.collection.countDocuments(),
 
-    allBooks: (root, args) => {      
-      let qBooks = Book.find({})
+    allBooks: async (root, args) => {
+      let qBooks = await Book.find({}).populate('author')
 
-      if (args.author){
-        const byAuthor = (book) => 
-      book.author === args.author
-      qBooks = qBooks.filter(byAuthor)
+      if (args.author) {
+        const authorQueryResult = await Author.findOne({ name: args.author })
+
+        const byAuthor = (book) => book.author === authorQueryResult
+        qBooks = qBooks.filter(byAuthor)
       }
-      if (args.genre){
-        const byGenre = (book) => 
-      book.genres.includes(args.genre)
-      qBooks = qBooks.filter(byGenre)
+      if (args.genre) {
+        const byGenre = (book) => book.genres.includes(args.genre)
+        qBooks = qBooks.filter(byGenre)
       }
 
       return qBooks
@@ -85,42 +85,62 @@ const resolvers = {
 
     allAuthors: (root, args) => {
       return Author.find({})
-    }
+    },
   },
   Author: {
-    bookCount: (root) => {
-      const allBooks = Book.find({})
-      const bookList = allBooks.filter(b => b.author === root.name)
-      return bookList.length
-    }
+    bookCount: async (root) => {
+      return Book.countDocuments({ author: root })
+    },
   },
   Mutation: {
     addBook: async (root, args) => {
       // Find author and add if missing
-      const authorQueryResult = await Author.findOne({ name: args.author }).exec()
-      if (!authorQueryResult){
+      let authorQueryResult = await Author.findOne({ name: args.author }).exec()
+      if (!authorQueryResult) {
         const newAuthor = {
           name: args.author,
-          born: null          
+          born: null,
         }
         const author = new Author(newAuthor)
-        authorQueryResult = await author.save()
+        try {
+          authorQueryResult = await author.save()
+        } catch (error) {
+          throw new UserInputError('UserInputError -> ' + error.message, {
+            invalidArgs: args,
+          })
+        }
       }
       // Add book
       const newBook = new Book({ ...args, author: authorQueryResult })
-      
-      return newBook.save()
+      try {
+        await newBook.save()
+      } catch (error) {        
+        throw new UserInputError('UserInputError -> ' + error.message, {
+          invalidArgs: args,
+        })
+      }
+      return newBook
     },
 
     editAuthor: async (root, args) => {
-      const authorQueryResult = await Author.findOne({ name: args.author }).exec()
-      if(!authorQueryResult) return null
+      const authorQueryResult = await Author.findOne({
+        name: args.name,
+      }).exec()
+
+      if (!authorQueryResult) return null
 
       authorQueryResult.born = args.setBornTo
-      //authors = [ ...authors, authorQueryResult]
-      return authorQueryResult.save()
-    }
-  }  
+
+      try {
+        await authorQueryResult.save()
+      } catch (error) {
+        throw new UserInputError('UserInputError -> ' + error.message, {
+          invalidArgs: args,
+        })
+      }
+      return authorQueryResult
+    },
+  },
 }
 
 const server = new ApolloServer({
