@@ -113,11 +113,10 @@ const resolvers = {
       if(!currentUser){
         throw new AuthenticationError("not authenticated")
       }
-      let authorQueryResult = await Author.findOne({ name: args.author }).exec()
+      let authorQueryResult = await Author.findOne({ name: args.author })
       if (!authorQueryResult) {
         const newAuthor = {
-          name: args.author,
-          born: null,
+          name: args.author
         }
         const author = new Author(newAuthor)
         try {
@@ -129,6 +128,7 @@ const resolvers = {
         }
       }
       // Add book
+      console.log('authorQueryResult: ', authorQueryResult)
       const newBook = new Book({ ...args, author: authorQueryResult })
       try {
         await newBook.save()
