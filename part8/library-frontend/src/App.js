@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
-import { LOGIN } from './queries'
-import { useMutation } from '@apollo/client'
+import { LOGIN, CURRENT_USER } from './queries'
+import { useMutation, useQuery } from '@apollo/client'
 import { useApolloClient } from '@apollo/client'
+import Recommended from './components/Recommended'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -18,6 +19,9 @@ const App = () => {
       console.log(error.graphQLErrors[0].message)
     }
   })
+
+  const currentUser = useQuery(CURRENT_USER)
+  
   useEffect(() => {
     const oldToken = localStorage.getItem('fullstackopenbookapp')
     console.log('oldToken:',oldToken)
@@ -43,6 +47,11 @@ const App = () => {
     client.resetStore()
   }
 
+  
+  if (currentUser.loading)  {
+    return <div>loading...</div>
+  }
+  console.log('currentUser :',currentUser.data);
   if(!token){
     return (
       <div>
@@ -74,6 +83,7 @@ const App = () => {
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
         <button onClick={() => setPage('add')}>add book</button>
+        <button onClick={() => setPage('recommended')}>recommended</button>
         <button onClick={logoutHandler}>logout</button>
       </div>
 
@@ -87,6 +97,10 @@ const App = () => {
 
       <NewBook
         show={page === 'add'}
+      />
+
+      <Recommended
+        show={page === 'recommended'} genre={currentUser.data.me.favoriteGenre}
       />
 
     </div>
