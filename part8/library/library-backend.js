@@ -9,6 +9,9 @@ const Author = require('./schemas/Author')
 const Book = require('./schemas/Book')
 const User = require('./schemas/User')
 
+const { PubSub } = require('apollo-server')
+const pubsub = new PubSub()
+
 const MONGODB_URI = process.env.MONGODB_URI
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -68,6 +71,9 @@ const typeDefs = gql`
   type Token {
     value: String!
   }
+  type Subscription {
+    bookAdded: Book!
+}    
 `
 
 const resolvers = {
@@ -141,6 +147,9 @@ const resolvers = {
           invalidArgs: args,
         })
       }
+      //publish new book
+      pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
+
       return newBook
     },
 
@@ -197,6 +206,12 @@ const resolvers = {
   
       return { value: jwt.sign(userForToken, JWT_SECRET) }
     },
+    
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+    },
   },
 }
 
@@ -213,6 +228,7 @@ const server = new ApolloServer({
   },
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })
