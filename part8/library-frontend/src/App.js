@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
-import { LOGIN, CURRENT_USER, BOOK_ADDED } from './queries'
+import { LOGIN, CURRENT_USER, BOOK_ADDED, ALL_BOOKS } from './queries'
 import { useMutation, useQuery } from '@apollo/client'
 import { useApolloClient, useSubscription } from '@apollo/client'
 import Recommended from './components/Recommended'
@@ -36,11 +36,28 @@ const App = () => {
     }
   }, [result.data]) // eslint-disable-line
 
+  const updateCacheWith = (addedBook) => {
+    console.log('updateCacheWith : ', addedBook)
+    const includedIn = (set, object) => 
+      set.map(p => p.id).includes(addedBook.id)  
+
+    const dataInStore = client.readQuery({ query: ALL_BOOKS })
+    console.log('updateCacheWith dataInStore.allBooks: ', dataInStore.allBooks)
+    if (!includedIn(dataInStore.allBooks, addedBook)) {
+      client.writeQuery({
+        query: ALL_BOOKS,
+        data: { allBooks : dataInStore.allBooks.concat(addedBook) }
+      })
+    }   
+  }
+
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
-      console.log(subscriptionData);
+      const newBook = subscriptionData.data.bookAdded
+      console.log(newBook);
       window.alert("New book : " + subscriptionData.data.bookAdded.title.toString() + " by " +
       subscriptionData.data.bookAdded.author.name)
+      updateCacheWith(newBook)
     }
   })
 
@@ -58,6 +75,9 @@ const App = () => {
   
   if (currentUser.loading)  {
     return <div>loading...</div>
+  }
+  if (currentUser.error)  {
+    return <div>error while loading the user...</div>
   }
   console.log('currentUser :',currentUser.data);
   if(!token){
@@ -104,7 +124,7 @@ const App = () => {
       />
 
       <NewBook
-        show={page === 'add'}
+        show={page === 'add'} updateCacheWith={updateCacheWith}
       />
 
       <Recommended
