@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
-import { LOGIN, CURRENT_USER } from './queries'
+import { LOGIN, CURRENT_USER, BOOK_ADDED } from './queries'
 import { useMutation, useQuery } from '@apollo/client'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
 import Recommended from './components/Recommended'
 
 const App = () => {
@@ -35,6 +35,14 @@ const App = () => {
       localStorage.setItem('fullstackopenbookapp', token)
     }
   }, [result.data]) // eslint-disable-line
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log(subscriptionData);
+      window.alert("New book : " + subscriptionData.data.bookAdded.title.toString() + " by " +
+      subscriptionData.data.bookAdded.author.name)
+    }
+  })
 
   const loginHandler = async (event) => {
     event.preventDefault()
