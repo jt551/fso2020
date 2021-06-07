@@ -7,6 +7,7 @@ interface exerciseResults {
     rating: number,
     ratingDescription: string
 }
+
 const getRatingNumber = (average: number): number => {
     if (average < 1) {
         return 1;
@@ -63,4 +64,31 @@ const calculateExercises = (weeklyData: number[], target: number): exerciseResul
     return resultObj
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+const parseVariedArguments = (args: Array<string>): Array<number> => {
+    const parsedArray: number[] = []
+    args.forEach(element => {
+        if (!isNaN(Number(element))) {
+            parsedArray.push(Number(element))
+        } else {
+            throw new Error('Provided values were not valid!');
+        }
+    })
+    return parsedArray
+}
+
+try {
+
+    const userInput = process.argv.slice(2);
+
+    const userTarget = Number(userInput.shift())
+    if (isNaN(userTarget)) {
+        throw new Error('Provided values were not valid!');
+    }
+
+    console.log(calculateExercises(parseVariedArguments(userInput), userTarget));
+    
+} catch (e) {
+    console.log('Error : ', e.message);
+
+}
+
