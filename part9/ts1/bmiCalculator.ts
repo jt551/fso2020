@@ -29,18 +29,17 @@ export const parseArguments = (args: Array<string>): Array<number> => {
   }
 };
 
-export const checkAndReturnBmi = (h: any, w: any): string => {
+export const checkAndReturnBmi = (h: string, w: string): string => {
+  const height = Number(h);
+  const weight = Number(w);
+  let bmiReturn = 'malformatted parameters';
 
-    const height : number = Number(h)
-    const weight : number = Number(w)
-    let bmiReturn: string = 'malformatted parameters'
+  if (!isNaN(height) && !isNaN(weight)) {
+    bmiReturn = calculateBmi(height, weight);
+  }
 
-    if(!isNaN(height) && !isNaN(weight)) {
-        bmiReturn = calculateBmi(height, weight);
-    } 
-
-    return bmiReturn;
-}
+  return bmiReturn;
+};
 /*
 const userArgs = process.argv.slice(2);
 
