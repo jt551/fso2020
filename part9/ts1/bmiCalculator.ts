@@ -32,7 +32,7 @@ export const parseArguments = (args: Array<string>): Array<number> => {
 export const checkAndReturnBmi = (h: string, w: string): string => {
   const height = Number(h);
   const weight = Number(w);
-  let bmiReturn = 'malformatted parameters';
+  let bmiReturn = 'malformed parameters';
 
   if (!isNaN(height) && !isNaN(weight)) {
     bmiReturn = calculateBmi(height, weight);

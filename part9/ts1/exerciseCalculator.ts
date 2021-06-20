@@ -67,27 +67,37 @@ const calculateExercises = (
   return resultObj;
 };
 
+export const checkAndReturnCalculateExercises = (data: Array<string>, target: string) : exerciseResults=> {
+  const parsedData = parseVariedArguments(data);
+  const parsedTarget = Number(target);
+
+  if( parsedTarget < 1) throw new Error('Provided values were not valid!');
+  
+  const response = calculateExercises(parsedData, parsedTarget);
+  return response;
+};
+
 const parseVariedArguments = (args: Array<string>): Array<number> => {
   const parsedArray: number[] = [];
   args.forEach((element) => {
     if (!isNaN(Number(element))) {
       parsedArray.push(Number(element));
     } else {
-      throw new Error('Provided values were not valid!');
+      throw new Error('Provided values were not valid1!');
     }
   });
   return parsedArray;
 };
 
-try {
-  const userInput = process.argv.slice(2);
+// try {
+//   const userInput = process.argv.slice(2);
 
-  const userTarget = Number(userInput.shift());
-  if (isNaN(userTarget)) {
-    throw new Error('Provided values were not valid!');
-  }
+//   const userTarget = Number(userInput.shift());
+//   if (isNaN(userTarget)) {
+//     throw new Error('Provided values were not valid!');
+//   }
 
-  console.log(calculateExercises(parseVariedArguments(userInput), userTarget));
-} catch (e) {    
-  console.log(e);
-}
+//   console.log(calculateExercises(parseVariedArguments(userInput), userTarget));
+// } catch (e) {  
+//   console.log(e);
+// }
