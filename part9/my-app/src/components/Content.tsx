@@ -4,7 +4,7 @@ import {CoursePart} from '../types'
 
 const Content = ({parts}: {parts: CoursePart[]}) => {
   const courseList = parts.map((part) => (
-    <Part part={part}/>
+    <Part key={part.name} part={part}/>
   ));
   return <div>{courseList}</div>;
 };

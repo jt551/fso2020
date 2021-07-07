@@ -10,9 +10,16 @@ const assertNever = (value: never): never => {
 const Part = ({part}: {part: CoursePart}) => {
   switch (part.type) {
     case 'normal':
+      const fa = Object.entries(part).map((key, value) => {
+        return(
+        <p key={value}><span>{key}</span> : <span>{value}</span></p>
+        )
+      });
+      console.log(fa);
+      
       return (
         <div>
-          <p>1a1</p>
+         {fa}
         </div>
       );
     case 'groupProject':
