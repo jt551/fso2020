@@ -6,16 +6,30 @@ const assertNever = (value: never): never => {
     `Unhandled discriminated union member: ${JSON.stringify(value)}`
   );
 };
-//{Object.entries(part).forEach(([key, value]) => <p>${value}</p>)}
+
 const Part = ({part}: {part: CoursePart}) => {
+  const renderParts = (p: CoursePart) => {
+    return Object.entries(p).map((key, value) => {
+      console.log(key);
+      if(key[0] === 'name'){
+        return <h4 key={value}><span>{key[0]}</span> : <span>{key[1]}</span></h4>
+      } else {
+        return <p key={value}><span>{key[0]}</span> : <span>{key[1]}</span></p>
+      }
+  })
+}
+
   switch (part.type) {
     case 'normal':
       const fa = Object.entries(part).map((key, value) => {
+        console.log(key);
+        if(key[0] === 'name'){
+          return <h4 key={value}><span>{key[0]}</span> : <span>{key[1]}</span></h4>
+        }
         return(
-        <p key={value}><span>{key}</span> : <span>{value}</span></p>
+        <p key={value}><span>{key[0]}</span> : <span>{key[1]}</span></p>
         )
       });
-      console.log(fa);
       
       return (
         <div>
