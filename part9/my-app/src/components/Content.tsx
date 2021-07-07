@@ -1,17 +1,10 @@
 import React from 'react';
+import Part from './Part'
+import {CoursePart} from '../types'
 
-interface ContentProps {
-  courseParts: {
-    name: string;
-    exerciseCount: number;
-  }[];
-}
-
-const Content = ({ courseParts }: ContentProps) => {
-  const courseList = courseParts.map((course) => (
-    <p key={course.name}>
-      {course.name} {course.exerciseCount}
-    </p>
+const Content = ({parts}: {parts: CoursePart[]}) => {
+  const courseList = parts.map((part) => (
+    <Part part={part}/>
   ));
   return <div>{courseList}</div>;
 };
